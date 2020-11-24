@@ -1,0 +1,6 @@
+#!/bin/bash
+DIRNAME="$(readlink -f $0)";
+cd "$(dirname "${DIRNAME}")"/../../../
+./certbot-renew.sh;
+docker-compose exec nginx nginx -s reload;
+

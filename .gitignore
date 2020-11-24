@@ -1,0 +1,12 @@
+bw-data
+certbot
+.env
+nginx/cache
+nginx/dhparams.pem
+pihole
+plex/config
+plex/transcode
+ddclient/config/ddclient.conf
+openvpn
+*.ovpn
+gitbucket/data

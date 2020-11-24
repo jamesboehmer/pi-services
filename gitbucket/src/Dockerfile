@@ -1,0 +1,23 @@
+FROM adoptopenjdk/openjdk14
+
+MAINTAINER f99aq8ove <f99aq8ove [at] gmail.com>
+
+ENV GITBUCKET_VER 4.34.0
+ENV GITBUCKET_EXTRA_DEPS "git procps"
+
+ADD https://github.com/gitbucket/gitbucket/releases/download/$GITBUCKET_VER/gitbucket.war /opt/gitbucket.war
+
+RUN apt-get update && apt-get upgrade -y && apt-get install --no-install-recommends -y \
+    graphviz $GITBUCKET_EXTRA_DEPS \
+    && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+RUN ln -s /gitbucket /root/.gitbucket
+
+VOLUME /gitbucket
+
+# Port for web page
+EXPOSE 8080
+# Port for SSH access to git repository (Optional)
+EXPOSE 29418
+
+CMD java $JAVA_OPTS -jar /opt/gitbucket.war $GITBUCKET_OPTS

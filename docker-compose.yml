@@ -1,0 +1,140 @@
+version: "3.5"
+services:
+
+  nginx:
+    restart: always
+    image: nginx:stable-alpine
+    container_name: nginx
+    environment:
+      - LETS_ENCRYPT_CERT
+    volumes:
+      - ./nginx/dhparams.pem:/etc/ssl/dhparams.pem
+      - ./nginx/ssl.conf:/etc/nginx/ssl.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/cache/:/etc/nginx/cache
+      - ./certbot/etc/letsencrypt:/etc/letsencrypt
+      - ./nginx/link-cert.sh:/docker-entrypoint.d/link-cert.sh
+    ports:
+      - "60888:60888"
+      - "80:80"
+      - "443:443"
+    networks:
+      - bitwarden
+      - pihole
+      - plex
+      - gitbucket
+
+  bitwarden:
+    restart: always
+    image: bitwardenrs/server:latest
+    container_name: bitwarden
+    volumes:
+      - ./bw-data:/data
+    environment:
+      - ADMIN_TOKEN
+      - TZ
+      - LOG_FILE=/data/bitwarden.log
+      - EXTENDED_LOGGING=true
+      - LOG_LEVEL=warn
+      - ROCKET_WORKERS=20
+      - WEBSOCKET_ENABLED=true
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=false
+      - SHOW_PASSWORD_HINT=false
+      - DISABLE_ICON_DOWNLOAD=false
+    ports:
+      - "80"
+      - "3012"
+    networks:
+      - bitwarden
+
+  pihole:
+    restart: always
+    image: pihole/pihole:latest
+    container_name: pihole
+    volumes:
+      - ./pihole/etc/pihole:/etc/pihole
+      - ./pihole/etc/dnsmasq.d:/etc/dnsmasq.d
+    environment:
+      - WEBPASSWORD
+      - TZ
+      - PHP_ERROR_LOG=/dev/stderr
+    ports:
+      - "80"
+      - "53:53/udp"
+      - "53:53/tcp"
+    networks:
+      - pihole
+
+  plex:
+    container_name: plex
+    build:
+      context: $PWD/plex/src
+      dockerfile: $PWD/plex/src/Dockerfile.armv7
+    restart: unless-stopped
+    ports:
+      - 32400:32400/tcp
+      - 3005:3005/tcp
+      - 8324:8324/tcp
+      - 32469:32469/tcp
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+    environment:
+      - PLEX_MEDIA_PATH
+      - PLEX_CLAIM
+      - TZ
+      - ADVERTISE_IP="http://${ADVERTISE_IP}:32400/"
+    volumes:
+      - ./plex/config:/config
+      - ./plex/transcode:/transcode
+      - $PLEX_MEDIA_PATH:/data
+    networks:
+      - plex
+
+  ddclient:
+    image: linuxserver/ddclient:version-v3.9.1
+    container_name: ddclient
+    environment:
+      - TZ
+    volumes:
+      - ./ddclient/config:/config
+    restart: unless-stopped
+
+  openvpn:
+    image: giggio/openvpn-arm
+    container_name: openvpn
+    privileged: true
+    ports:
+      - "1194:1194/udp"
+    volumes:
+      - ./openvpn:/etc/openvpn
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+
+  gitbucket:
+    build:
+      context: $PWD/gitbucket/src
+      dockerfile: $PWD/gitbucket/src/Dockerfile
+    container_name: gitbucket
+    ports:
+      - "8080"
+      - "29418:29418"
+    volumes:
+      - ./gitbucket/data:/gitbucket
+    restart: unless-stopped
+    networks:
+      - gitbucket
+
+networks:
+  pihole:
+    name: pihole
+  bitwarden:
+    name: bitwarden
+  plex:
+    name: plex
+  gitbucket:
+    name: gitbucket
