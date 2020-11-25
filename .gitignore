@@ -10,3 +10,4 @@ ddclient/config/ddclient.conf
 openvpn
 *.ovpn
 gitbucket/data
+nextcloud
