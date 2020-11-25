@@ -33,6 +33,7 @@ Generate a Letsencrypt cert for your personal domain, set a handful of configs i
 * Pihole admin: `https://pihole.<mydomain.com>:443`
 * Plex: `https://plex.<mydomain.com>:443`
 * Gitbucket: `https://gitbucket.<mydomain.com>:443`
+* Nextcloud: `https://nextcloud.<mydomain.com>:443`
 
 ## Creating VPN client configs
 
