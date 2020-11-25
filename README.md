@@ -10,7 +10,7 @@ Generate a Letsencrypt cert for your personal domain, set a handful of configs i
 2. Run `certbot-create.sh` to create letsencrypt certs e.g. `certbot-create.sh '*.mydomain.com'`
 3. Run `nginx-create-dhparams.sh` to create a new dhparams.pem 
 4. Edit `ddclient/config/ddclient.conf.example` and save as `ddclient/config/ddclient.conf`
-5. Run `openvpn-init.sh` to initialize the openvpn server
+5. Run `openvpn-init.sh` to initialize the openvpn server, e.g. `openvpn-init.sh subdomain.mydomain.com`
 6. Add the following to `.env`:
 
 	```
@@ -25,6 +25,16 @@ Generate a Letsencrypt cert for your personal domain, set a handful of configs i
 
 7. Run `cron-create-renew-job.sh` to create a cron job that renews the cert and restarts nginx
 8. Run `docker-compose up -d`
+
+## Hosts/ports
+
+* Bitwarden: `https://bw.<mydomain.com>:60888`
+* OpenVPN: `subdomain.<mydomain.com>:1194` (udp)
+* Pihole admin: `https://pihole.<mydomain.com>:443`
+* Plex: `https://plex.<mydomain.com>:443`
+* Gitbucket: `https://gitbucket.<mydomain.com>:443`
+
+## Creating VPN client configs
 
 Run `openvpn-create-client.sh` to create a vpn client profile.
 
