@@ -23,6 +23,7 @@ services:
       - pihole
       - plex
       - gitbucket
+      - nextcloud
 
   bitwarden:
     restart: always
@@ -129,6 +130,17 @@ services:
     networks:
       - gitbucket
 
+  nextcloud:
+    image: nextcloud:stable-fpm-alpine
+    container_name: nextcloud
+    ports:
+      - "9000"
+    volumes:
+      - "./nextcloud:/var/www/html"
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
 networks:
   pihole:
     name: pihole
@@ -138,3 +150,5 @@ networks:
     name: plex
   gitbucket:
     name: gitbucket
+  nextcloud:
+    name: nextcloud
