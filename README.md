@@ -1,8 +1,8 @@
 # pi-services
 
-This project is a collection of docker containers that I run on my raspberry pi.  Set a handful of configs in .env and run `docker-compose up` to start everything.  
+This project is a collection of docker containers that I run on my raspberry pi 4.  It's a powerhouse little box, but also a little challenging to find armv7 docker images for.  I run this docker-compose setup from an external drive directory, so if I replace my pi I won't lose my data.
 
-Expose external ports 60888/tcp for Bitwarden, and 1194/udp for OpenVPN.  Ports 80/443
+Generate a Letsencrypt cert for your personal domain, set a handful of configs in `.env` and run `docker-compose up -d` to start everything.  Expose external ports 60888/tcp for Bitwarden, and 1194/udp for OpenVPN.  Ports 80/443 also expose pihole admin, plex media server, and gitbucket, but I personally keep them only on my internal network.
 
 ## Setup
 
